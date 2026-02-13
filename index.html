@@ -2,39 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WiFi Login | Valentine's Network</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@700&display=swap');
-        
-        * { cursor: none !important; margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0b0101; overflow: hidden; font-family: 'Poppins', sans-serif; height: 100vh; width: 100vw; }
-        .font-love { font-family: 'Dancing Script', cursive; }
+    <title>💘 Valentine Free WiFi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-        /* Love Arrow Cursor */
-        #cursor {
-            position: fixed;
-            width: 28px;
-            height: 28px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4d6d'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") no-repeat;
-            pointer-events: none;
-            z-index: 10000;
-            transform: translate(-50%, -50%);
-        }
+    <div class="container">
+        <h1>💖 Happy Valentine's Day 💖</h1>
+        <p class="subtitle">Connect to our Free Love WiFi 💘</p>
 
-        /* Login Card Styling */
-        .login-card {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+        <div class="wifi-box">
+            <h2>📶 WiFi Details</h2>
+            <p><strong>Network Name (SSID):</strong> LoveZone</p>
+            <p><strong>Password:</strong> <span id="password">Valentine</span></p>
+            <button onclick="copyPassword()">Copy Password</button>
+        </div>
 
-        .input-field {
-            background: rgba(255, 255, 255, 0.1);
+        <div class="qr-section">
+            <h2>📱 Scan to Connect</h2>
+            <img src="wifi-qr.png" alt="WiFi QR Code" class="qr-image">
+        </div>
+
+        <div class="connect-section">
+            <button class="connect-btn" onclick="showLove()">
+                💘 Connect & Feel the Love
+            </button>
+        </div>
+
+        <p class="footer">Made with ❤️ by ProTech</p>
+    </div>
+
+<script src="script.js"></script>
+</body>
+</html>            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
         }
