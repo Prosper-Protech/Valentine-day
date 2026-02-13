@@ -1,40 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>💘 Valentine Free WiFi</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💘 Valentine Free WiFi</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
-        <h1>💖 Happy Valentine's Day 💖</h1>
-        <p class="subtitle">Connect to our Free Love WiFi 💘</p>
+<div class="hearts"></div>
 
-        <div class="wifi-box">
-            <h2>📶 WiFi Details</h2>
-            <p><strong>Network Name (SSID):</strong> LoveZone</p>
-            <p><strong>Password:</strong> <span id="password">Valentine</span></p>
-            <button onclick="copyPassword()">Copy Password</button>
-        </div>
+<div class="container">
+    <h1>💖 Happy Valentine’s Day 💖</h1>
+    <p class="subtitle">Connect to Our Free Love WiFi</p>
 
-        <div class="qr-section">
-            <h2>📱 Scan to Connect</h2>
-            <img src="wifi-qr.png" alt="WiFi QR Code" class="qr-image">
-        </div>
-
-        <div class="connect-section">
-            <button class="connect-btn" onclick="showLove()">
-                💘 Connect & Feel the Love
-            </button>
-        </div>
-
-        <p class="footer">Made with ❤️ by ProTech</p>
+    <div class="wifi-card">
+        <h2>📶 WiFi Details</h2>
+        <p><strong>Network:</strong> LoveZone</p>
+        <p><strong>Password:</strong> <span id="password">Valentine</span></p>
+        <button onclick="copyPassword()">Copy Password 💘</button>
     </div>
 
+    <div class="qr-section">
+        <h3>📱 Scan To Connect</h3>
+        <div id="qrcode"></div>
+    </div>
+
+    <button class="connect-btn" onclick="connectMessage()">
+        💞 Connect Now
+    </button>
+
+    <button class="music-btn" onclick="toggleMusic()">
+        🎵 Toggle Music
+    </button>
+
+    <p class="footer">Made with ❤️ by ProTech</p>
+</div>
+
+<audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="script.js"></script>
 </body>
-</html>            background: rgba(255, 255, 255, 0.1);
+</html></html>            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
         }
