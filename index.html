@@ -3,38 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>💘 Love WiFi · Valentine’s Arrow</title>
-    <!-- Tailwind + Three.js + QR Code generator -->
+    <title>💕 Valentine WiFi · Love Arrow</title>
+    <!-- Tailwind + Three.js + QRCode -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap');
         
-        * { cursor: none; } /* hide default cursor — custom love arrow takes over (desktop) */
-        body { margin: 0; overflow: hidden; background: #0a0a0a; font-family: 'Poppins', sans-serif; }
+        * { cursor: none; }  /* custom arrow cursor takes over on desktop */
+        body { margin: 0; overflow: hidden; background: #0a0a1a; font-family: 'Poppins', sans-serif; }
         .font-love { font-family: 'Dancing Script', cursive; }
 
-        /* glassmorphism card */
+        /* glassmorphism card with deep romantic glow */
         .glass {
-            background: rgba(20, 10, 30, 0.35);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 180, 200, 0.3);
-            box-shadow: 0 25px 50px -8px rgba(255, 80, 120, 0.4);
+            background: rgba(25, 10, 20, 0.4);
+            backdrop-filter: blur(18px) saturate(200%);
+            -webkit-backdrop-filter: blur(18px) saturate(200%);
+            border: 1px solid rgba(255, 140, 200, 0.35);
+            box-shadow: 0 30px 50px -15px #ff1a4c, 0 0 0 1px rgba(255, 105, 180, 0.3) inset;
             border-top: 3px solid #ff99bb;
         }
 
-        /* anime walking style (now extra interactive) */
-        .anime-journey {
-            animation: walk-bounce 2s infinite ease-in-out;
-            filter: drop-shadow(0 0 18px #ffb6c1);
+        /* Anime walking couple with extra love */
+        .walking-couple {
+            animation: walk-bounce 2.2s infinite ease-in-out;
+            filter: drop-shadow(0 0 22px #ffb6c1) drop-shadow(0 0 8px #ff4d6d);
             transition: transform 0.2s;
             display: inline-block;
-            cursor: pointer;
         }
-        .anime-journey:active {
+        .walking-couple:active {
+            transform: scale(1.8);
             animation: none;
+        }
+        @keyframes walk-bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            30% { transform: translateY(-12px) rotate(-2deg); }
+            60% { transform: translateY(-20px) rotate(3deg); }
+        }
+
+        canvas { position: fixed; top: 0; left: 0; z-index: 0; }
+        .ui-content { position: relative; z-index: 20; pointer-events: none; }
+        .pointer-all { pointer-events: all; }
+
+        /* ---------- LOVE ARROW CURSOR (desktop only) ---------- */
+        #love-cursor {
+            position: fixed;
+            width: 56px;
+            height: 56px;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 48px;
+            line-height: 1;
+            text-align: center;
+            filter: drop-shadow(0 0 22px #ff3b6f) drop-shadow(0 0 14px #ffb3c6);
+            transform: translate(-50%, -50%) rotate(-15deg);
+            transition: transform 0.06s ease;
+            will-change: left, top;
+            display: none; /* shown only on hover devices */
+        }
+        #love-cursor span {
+            display: block;
+            animation: arrow-pulse 1.4s infinite alternate;
+        }
+        @keyframes arrow-pulse {
+            0% { transform: rotate(-8deg) scale(1); }
+            100% { transform: rotate(8deg) scale(1.15); }
+        }
+
+        /* sprinkle particles (hearts, stars, kisses) */
+        .sprinkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            font-size: 28px;
+            animation: sprinkle-fall 1.3s ease-out forwards;
+            filter: drop-shadow(0 0 12px #ff9eb5);
+            will-change: transform, opacity;
+        }
+        @keyframes sprinkle-fall {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(calc(40px - 80px * random()), -160px) scale(0) rotate(70deg); opacity: 0; }
+        }
+
+        /* mobile hint: no custom cursor, but sprinkles on tap */
+        @media (hover: none) and (pointer: coarse) {
+            #love-cursor { display: none !important; }
+        }
+
+        /* QR code styling */
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 12px 0 4px;
+        }
+        #qrcode canvas {
+            position: relative !important;
+            width: 130px;
+            height: 130px;
+            border-radius: 30px;
+            padding: 6px;
+            background: white;
+            box-shadow: 0 0 36px #ffa5c3;
+            border: 3px solid #ffc0cb;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D background canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- custom love arrow (only visible with mouse) -->
+    <div id="love-cursor"><span>💘</span></div>
+
+    <!-- main UI card - exactly matching requested phrases -->
+    <div class="ui-content w-full max-w-sm px-4 py-2">
+        <div class="glass rounded-[48px] p-6 text-center pointer-all border border-pink-400/40 shadow-2xl">
+
+            <!-- main title and description -->
+            <div class="text-pink-300 text-5xl mb-1 drop-shadow-2xl">🌹✨</div>
+            <h1 class="text-4xl font-love text-white mb-1 leading-tight drop-shadow-xl">Happy Valentine's Day</h1>
+            <p class="text-rose-100/90 text-sm font-light italic bg-black/30 py-1 px-4 rounded-full inline-block backdrop-blur-sm">
+                Traveling through the love world to find you...
+            </p>
+
+            <!-- interactive walking couple (click for sprinkles) -->
+            <div class="walking-couple text-7xl my-5" id="couple-emoji" onclick="burstFromElement(this, '💑💕🌸')">
+                👩‍❤️‍👨
+            </div>
+
+            <!-- WiFi connect button (exact wording) -->
+            <a id="wifi-link" 
+               href="WIFI:S:ValentineWiFi;T:WPA;P:Valentine;;" 
+               class="block w-full py-4 bg-gradient-to-r from-rose-600 to-pink-500 hover:from-rose-700 hover:to-pink-600 text-white rounded-2xl font-bold text-lg shadow-xl transition-all active:scale-95 active:shadow-rose-300/70">
+                📶 Tap to Connect WiFi
+            </a>
+
+            <!-- Password: Valentine (Tap to Copy) -->
+            <button onclick="copyPassword()" 
+                    class="block w-full mt-3 py-3 border border-pink-400/50 bg-white/10 text-rose-100 rounded-2xl text-sm tracking-wider uppercase backdrop-blur-sm hover:bg-white/20 transition">
+                🔑 Password: <span class="text-white font-bold text-base ml-1">Valentine</span> (Tap to Copy)
+            </button>
+
+            <!-- Be My Valentine? button with celebration -->
+            <button onclick="celebrate()" 
+                    class="block w-full mt-5 py-4 bg-white text-rose-700 rounded-2xl font-black text-xl shadow-2xl hover:bg-rose-50 transition-all active:scale-95">
+                💞 Be My Valentine? 💞
+            </button>
+
+            <!-- Walking Life's Path Together... line (exact) -->
+            <div class="mt-4 text-rose-200 font-medium text-sm tracking-wide flex items-center justify-center gap-2">
+                <span class="w-8 h-px bg-pink-300/60"></span>
+                <span class="italic">Walking Life's Path Together...</span>
+                <span class="w-8 h-px bg-pink-300/60"></span>
+            </div>
+
+            <!-- QR code WiFi scanner -->
+            <div id="qrcode" class="mt-3"></div>
+            <p class="text-[10px] text-rose-200/70 mt-0">❤️ scan to connect (SSID: ValentineWiFi) ❤️</p>
+
+            <!-- status message for feedback -->
+            <div id="status" class="mt-3 text-pink-200 font-bold h-6 text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // --- THREE.JS LOVE GALAXY (cinematic particles) ---
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // create floating hearts & sparkles using points
+            const particlesGeo = new THREE.BufferGeometry();
+            const count = 4000;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i += 3) {
+                // heart-like distribution (slightly flattened sphere)
+                const r = 4 + Math.random() * 7;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                positions[i] = Math.sin(phi) * Math.cos(theta) * r;
+                positions[i+1] = Math.sin(phi) * Math.sin(theta) * r * 0.5; // flatten vertical
+                positions[i+2] = Math.cos(phi) * r;
+
+                // romantic colors: pink, red, gold, white
+                const hue = 0.95 + Math.random() * 0.15; // red-pink range
+                const color = new THREE.Color().setHSL(hue, 0.9, 0.6 + Math.random()*0.3);
+                colors[i] = color.r;
+                colors[i+1] = color.g;
+                colors[i+2] = color.b;
+            }
+            particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particlesGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const particlesMat = new THREE.PointsMaterial({ size: 0.08, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending });
+            const particles = new THREE.Points(particlesGeo, particlesMat);
+            scene.add(particles);
+
+            camera.position.z = 9;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.0009;
+                particles.rotation.x += 0.0003;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // --- INTERACTIVITY: copy, celebrate, sprinkles ---
+
+            // copy password function (exact "Valentine")
+            window.copyPassword = function() {
+                navigator.clipboard.writeText("Valentine").catch(() => alert("Manual copy: Valentine"));
+                document.getElementById('status').innerText = "❤️ Password 'Valentine' copied!";
+                setTimeout(() => document.getElementById('status').innerText = "", 2500);
+                burstSprinkles(12, '💖🔑');
+            };
+
+            // main celebration
+            window.celebrate = function() {
+                document.getElementById('status').innerHTML = "<span class='text-2xl animate-pulse'>💞 I LOVE YOU! 💞</span>";
+                particles.rotation.y += 0.9;  // spin galaxy
+                // massive sprinkle burst
+                for (let i=0; i<40; i++) {
+                    setTimeout(() => burstSprinkles(8, '💘❤️🌹'), i*20);
+                }
+                burstSprinkles(30, '💑💕');
+            };
+
+            // universal sprinkle burst
+            function burstSprinkles(count = 15, symbols = '❤️🧡💛💚💙💜🌸✨') {
+                const emojiSet = symbols.split('');
+                for (let i = 0; i < count; i++) {
+                    const sprinkle = document.createElement('div');
+                    sprinkle.className = 'sprinkle';
+                    const randomEmoji = emojiSet[Math.floor(Math.random() * emojiSet.length)] || '❤️';
+                    sprinkle.innerText = randomEmoji;
+                    sprinkle.style.left = Math.random() * 100 + 'vw';
+                    sprinkle.style.top = Math.random() * 100 + 'vh';
+                    sprinkle.style.fontSize = (22 + Math.random() * 32) + 'px';
+                    sprinkle.style.animation = `sprinkle-fall ${1 + Math.random() * 1.2}s ease-out forwards`;
+                    document.body.appendChild(sprinkle);
+                    setTimeout(() => sprinkle.remove(), 2000);
+                }
+            }
+            window.burstSprinkles = burstSprinkles;
+
+            // sprinkle on any click/tap (mobile friendly)
+            document.addEventListener('click', (e) => burstSprinkles(5, '💕🌸'));
+            document.addEventListener('touchstart', (e) => burstSprinkles(6, '✨💖'), { passive: true });
+
+            // burst from specific element (for couple click)
+            window.burstFromElement = function(el, sym) {
+                const rect = el.getBoundingClientRect();
+                const cx = (rect.left + rect.width/2) / window.innerWidth * 100;
+                const cy = (rect.top + rect.height/2) / window.innerHeight * 100;
+                for (let i=0; i<18; i++) {
+                    const sprinkle = document.createElement('div');
+                    sprinkle.className = 'sprinkle';
+                    sprinkle.innerText = ['💑','💕','🌸','❤️'][Math.floor(Math.random()*4)];
+                    sprinkle.style.left = cx + 'vw';
+                    sprinkle.style.top = cy + 'vh';
+                    sprinkle.style.fontSize = '32px';
+                    sprinkle.style.animation = `sprinkle-fall ${1+Math.random()}s ease-out forwards`;
+                    document.body.appendChild(sprinkle);
+                    setTimeout(() => sprinkle.remove(), 1500);
+                }
+            };
+
+            // --- CUSTOM LOVE ARROW CURSOR with sprinkle trail (desktop only) ---
+            const cursor = document.getElementById('love-cursor');
+            if (window.matchMedia('(pointer:fine)').matches) {
+                cursor.style.display = 'block';
+                document.addEventListener('mousemove', function(e) {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                    
+                    // sprinkle trail occasionally
+                    if (Math.random() < 0.25) {
+                        const trail = document.createElement('div');
+                        trail.className = 'sprinkle';
+                        trail.innerText = ['✨','💫','❤️','🌸'][Math.floor(Math.random()*4)];
+                        trail.style.left = e.clientX + 'px';
+                        trail.style.top = e.clientY + 'px';
+                        trail.style.fontSize = '22px';
+                        trail.style.animation = 'sprinkle-fall 0.9s ease-out forwards';
+                        document.body.appendChild(trail);
+                        setTimeout(() => trail.remove(), 900);
+                    }
+                });
+            } else {
+                cursor.style.display = 'none';
+            }
+
+            // --- QR CODE generation for WiFi (SSID: ValentineWiFi, password: Valentine) ---
+            const wifiString = "WIFI:S:ValentineWiFi;T:WPA;P:Valentine;;";
+            const qrContainer = document.getElementById('qrcode');
+            QRCode.toCanvas(wifiString, { width: 150, margin: 1, color: { dark: '#b30059', light: '#fff0fa' } }, function(err, canvas) {
+                if (err) {
+                    qrContainer.innerHTML = '<span class="text-pink-200">❤️</span>';
+                    return;
+                }
+                qrContainer.innerHTML = '';
+                canvas.style.width = '130px';
+                canvas.style.height = '130px';
+                canvas.classList.add('rounded-2xl', 'shadow-2xl', 'border-4', 'border-pink-300');
+                qrContainer.appendChild(canvas);
+            });
+
+            // ensure WiFi link uses the exact scheme
+            document.getElementById('wifi-link').href = wifiString;
+
+            // extra: couple click handler
+            document.getElementById('couple-emoji').addEventListener('click', function() {
+                burstSprinkles(18, '💑💕👩‍❤️‍👨');
+            });
+
+        })();
+    </script>
+
+    <!-- tiny additional style for random sprinkle movement -->
+    <style>
+        .sprinkle {
+            /* slight random offset via transform, but we already set left/top in js, animation will handle */
+            --random-x: calc(20px - 40px * Math.random());
+            --random-y: -150px;
+        }
+        /* sprinkle-fall uses translate, we can't use real random in pure CSS, but left/top vary */
+    </style>
+</body>
+</html>            animation: none;
             transform: scale(1.6);
         }
         @keyframes walk-bounce {
