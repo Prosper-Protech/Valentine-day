@@ -1,247 +1,1229 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magical Trailing Tab Bar</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-  body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    background: #1e1e2f;
-    font-family: 'Arial', sans-serif;
-    overflow: hidden;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Valentine’s Day ❤️ | WiFi Landing Page</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-pink: #ff4d6d;
+            --secondary-pink: #ff758f;
+            --soft-white: #fff0f3;
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --accent-red: #c9184a;
+        }
 
-  nav.menu {
-    display: flex;
-    position: relative;
-    height: 70px;
-    padding: 0 25px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(15px);
-    border-radius: 35px;
-    align-items: center;
-    justify-content: space-between;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    margin-bottom: 30px;
-    overflow: visible;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-  nav.menu input[type="radio"] { display: none; }
+        body {
+            background: linear-gradient(135deg, #ff8fa3 0%, #ff4d6d 50%, #c9184a 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            color: white;
+            padding: 20px;
+        }
 
-  nav.menu label {
-    text-decoration: none;
-    font-size: 12px;
-    color: #ccc;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.25, 1.25, 0.5, 1);
-    position: relative;
-  }
+        /* Floating Hearts Animation */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-  nav.menu label i {
-    font-size: 22px;
-    margin-bottom: 5px;
-    transition: transform 0.2s cubic-bezier(0.25, 1.25, 0.5, 1), color 0.3s;
-  }
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            animation: float 6s infinite linear;
+            opacity: 0;
+        }
 
-  nav.menu label:hover {
-    transform: translateY(-6px) scale(1.2);
-    color: #fff;
-  }
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
 
-  nav.menu label::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    font-size: 10px;
-    background: #ff4b5c;
-    padding: 2px 8px;
-    border-radius: 5px;
-    color: #fff;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: 0.3s;
-    pointer-events: none;
-  }
+            10% {
+                opacity: 0.8;
+            }
 
-  nav.menu label:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
+            90% {
+                opacity: 0.8;
+            }
 
-  .indicator {
-    position: absolute;
-    bottom: 0;
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, #ff4b5c, #ff9068);
-    border-radius: 2px;
-    transition: all 0.3s cubic-bezier(0.25, 1.25, 0.5, 1);
-    box-shadow: 0 0 15px #ff4b5c;
-    z-index: 0;
-  }
+            100% {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
 
-  nav.menu input[type="radio"]:checked + label i {
-    transform: translateY(-12px) scale(1.6);
-    color: #ff4b5c;
-    text-shadow: 0 0 20px #ff4b5c;
-    animation: float 1s infinite alternate ease-in-out;
-  }
+        main {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            padding-bottom: 120px;
+            /* Space for pinned taskbar */
+        }
 
-  @keyframes float {
-    0% { transform: translateY(-12px) scale(1.6); }
-    100% { transform: translateY(-16px) scale(1.6); }
-  }
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 1s ease-out;
+        }
 
-  .ripple {
-    position: absolute;
-    border-radius: 50%;
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    background-color: rgba(255, 75, 92, 0.4);
-    pointer-events: none;
-    z-index: 2;
-  }
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            animation: fadeInUp 1.2s ease-out;
+        }
 
-  @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+        /* WiFi Card */
+        .wifi-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: zoomIn 0.8s ease-out;
+        }
 
-  .particle, .trail {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: #ff4b5c;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 1;
-    z-index: 1;
-  }
+        .wifi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+        }
 
-  @keyframes particleMove {
-    to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
-  }
+        .info-row {
+            margin-bottom: 25px;
+            text-align: left;
+        }
 
-  @keyframes trailMove {
-    to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
-  }
-</style>
+        .label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+            opacity: 0.8;
+        }
+
+        .value {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: block;
+            word-break: break-all;
+        }
+
+        /* QR Code Section */
+        .qr-section {
+            margin: 30px 0;
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .qr-section:hover {
+            transform: scale(1.05);
+        }
+
+        .qr-image {
+            width: 180px;
+            height: 180px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.9rem;
+            border: 2px dashed #ddd;
+        }
+
+        .qr-text {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            outline: none;
+        }
+
+        .btn-copy {
+            background: white;
+            color: var(--primary-pink);
+        }
+
+        .btn-copy:hover {
+            background: var(--soft-white);
+            transform: scale(1.02);
+        }
+
+        .btn-connect {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 15px rgba(201, 24, 74, 0.4);
+        }
+
+        .btn-connect:hover {
+            background: #a4133c;
+            box-shadow: 0 0 25px rgba(201, 24, 74, 0.6);
+            transform: scale(1.02);
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        footer {
+            margin-top: 50px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-style: italic;
+            animation: fadeIn 2s ease-in;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+
+
+        /* Mascot Animation */
+        .mascot-container {
+            margin-bottom: 20px;
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        .mascot-svg {
+            width: 100px;
+            height: 100px;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ff4d6d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-heart {
+            font-size: 5rem;
+            animation: beat 1s infinite alternate cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes beat {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.3);
+            }
+        }
+
+        /* Taskbar Styles */
+        nav.menu {
+            display: flex;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 70px;
+            padding: 0 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 35px;
+            align-items: center;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            overflow: visible;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.25, 1.25, 0.5, 1);
+        }
+
+        nav.menu input[type="radio"] {
+            display: none;
+        }
+
+        nav.menu label {
+            text-decoration: none;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.25, 1.25, 0.5, 1);
+            position: relative;
+            z-index: 2;
+        }
+
+        nav.menu label i {
+            font-size: 22px;
+            margin-bottom: 5px;
+            transition: transform 0.2s cubic-bezier(0.25, 1.25, 0.5, 1), color 0.3s;
+        }
+
+        nav.menu label:hover {
+            transform: translateY(-6px) scale(1.2);
+            color: #fff;
+        }
+
+        nav.menu label::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            font-size: 10px;
+            background: var(--primary-pink);
+            padding: 2px 8px;
+            border-radius: 5px;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        nav.menu label:hover::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .indicator {
+            position: absolute;
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff4b5c, #ff9068);
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.25, 1.25, 0.5, 1);
+            box-shadow: 0 0 15px #ff4b5c;
+            z-index: 1;
+        }
+
+        nav.menu input[type="radio"]:checked+label i {
+            transform: translateY(-12px) scale(1.6);
+            color: white;
+            text-shadow: 0 0 20px #ff4b5c;
+            animation: tabFloat 1s infinite alternate ease-in-out;
+        }
+
+        @keyframes tabFloat {
+            0% {
+                transform: translateY(-12px) scale(1.6);
+            }
+
+            100% {
+                transform: translateY(-16px) scale(1.6);
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .particle,
+        .trail {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 1;
+            z-index: 1;
+        }
+
+        @keyframes particleMove {
+            to {
+                transform: translate(var(--x), var(--y)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes trailMove {
+            to {
+                transform: translate(var(--x), var(--y)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            .mascot-svg {
+                width: 90px;
+                height: 90px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+
+            .mascot-svg {
+                width: 80px;
+                height: 80px;
+            }
+
+            .wifi-card {
+                padding: 30px 20px;
+            }
+
+            .value {
+                font-size: 1.1rem;
+            }
+
+            .qr-image {
+                width: 150px;
+                height: 150px;
+            }
+
+            nav.menu {
+                height: 65px;
+                padding: 0 15px;
+                width: 95%;
+                border-radius: 30px;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            nav.menu label i {
+                font-size: 20px;
+            }
+
+            nav.menu label::after {
+                display: none;
+            }
+
+            nav.menu input[type="radio"]:checked+label i {
+                transform: translateY(-8px) scale(1.4);
+            }
+
+            @keyframes tabFloat {
+                0% {
+                    transform: translateY(-8px) scale(1.4);
+                }
+
+                100% {
+                    transform: translateY(-12px) scale(1.4);
+                }
+            }
+        }
+
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .wifi-card {
+                padding: 20px 10px;
+            }
+
+            nav.menu {
+                height: 60px;
+            }
+
+            nav.menu label i {
+                font-size: 18px;
+            }
+        }
+
+        /* Music Button */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .music-toggle.playing {
+            box-shadow: 0 0 15px var(--primary-pink);
+            animation: pulse-music 2s infinite;
+        }
+
+        @keyframes pulse-music {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Section Visibility */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Heartbeat for Card */
+        .wifi-card.active-connection {
+            animation: heartbeat 2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+
+            14% {
+                transform: scale(1.03);
+            }
+
+            28% {
+                transform: scale(1);
+            }
+
+            42% {
+                transform: scale(1.03);
+            }
+
+            70% {
+                transform: scale(1);
+            }
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin: 20px 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Love Meter */
+        .love-meter-container {
+            margin-top: 20px;
+        }
+
+        .meter-bar {
+            width: 100%;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .meter-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff4b5c, #ff9068);
+            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+    </style>
 </head>
+
 <body>
 
-<nav class="menu">
-  <input type="radio" name="tab" id="home" checked>
-  <label for="home" data-tooltip="Home"><i class="fas fa-home"></i></label>
+    <div id="preloader">
+        <div class="loader-heart">❤️</div>
+    </div>
 
-  <input type="radio" name="tab" id="search">
-  <label for="search" data-tooltip="Search"><i class="fas fa-search"></i></label>
+    <div class="hearts-container" id="hearts-container"></div>
 
-  <input type="radio" name="tab" id="notification">
-  <label for="notification" data-tooltip="Notification"><i class="fas fa-bell"></i></label>
+    <button class="music-toggle" onclick="toggleMusic(this)" title="Play Romantic Music">
+        <i class="fas fa-music"></i>
+    </button>
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-slow-lullaby-554.mp3" type="audio/mpeg">
+    </audio>
 
-  <input type="radio" name="tab" id="favorites">
-  <label for="favorites" data-tooltip="Favorites"><i class="fas fa-heart"></i></label>
+    <main>
+        <!-- Home Section -->
+        <div id="home-section" class="content-section active">
+            <div class="mascot-container">
+                <svg class="mascot-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Cute Cupid Heart Character -->
+                    <path fill="#ff4d6d"
+                        d="M100,160 C100,160 30,120 30,70 C30,40 55,20 75,20 C85,20 95,25 100,35 C105,25 115,20 125,20 C145,20 170,40 170,70 C170,120 100,160 100,160 Z" />
+                    <!-- Eyes -->
+                    <circle cx="75" cy="70" r="5" fill="white" />
+                    <circle cx="125" cy="70" r="5" fill="white" />
+                    <!-- Blush -->
+                    <circle cx="60" cy="85" r="8" fill="#ff758f" opacity="0.6" />
+                    <circle cx="140" cy="85" r="8" fill="#ff758f" opacity="0.6" />
+                    <!-- Smile -->
+                    <path d="M85,90 Q100,105 115,90" fill="none" stroke="white" stroke-width="3"
+                        stroke-linecap="round" />
+                    <!-- Little Angel Wings -->
+                    <path fill="rgba(255,255,255,0.7)" d="M40,50 Q10,20 40,30 Q60,40 40,50 Z" />
+                    <path fill="rgba(255,255,255,0.7)" d="M160,50 Q190,20 160,30 Q140,40 160,50 Z" />
+                </svg>
+            </div>
+            <h1>Happy Valentine’s Day ❤️</h1>
+            <p class="subtitle">Connect to Our Free Love WiFi</p>
 
-  <input type="radio" name="tab" id="profile">
-  <label for="profile" data-tooltip="Profile"><i class="fas fa-user"></i></label>
+            <div class="wifi-card" id="main-card">
+                <div class="info-row">
+                    <span class="label">Network (SSID)</span>
+                    <span class="value">Love_Valentine</span>
+                </div>
 
-  <div class="indicator"></div>
-</nav>
+                <div class="info-row">
+                    <span class="label">Password</span>
+                    <span class="value" id="wifi-password">Valentine</span>
+                </div>
 
-<script>
-  const indicator = document.querySelector('.indicator');
-  const labels = document.querySelectorAll('nav.menu label');
-  let selectedLabel = document.querySelector('input[name="tab"]:checked + label');
+                <div class="btn-group">
+                    <button class="btn btn-copy" onclick="copyPassword()">Copy Password</button>
+                    <button class="btn btn-connect" onclick="showPopup()">Connect Now</button>
+                </div>
+            </div>
 
-  function moveIndicator(target) {
-    const offset = target.offsetLeft + target.offsetWidth / 2 - indicator.offsetWidth / 2;
-    indicator.style.left = offset + 'px';
-    indicator.style.width = target.offsetWidth + 'px';
-  }
+            <div class="qr-section">
+                <div class="qr-image">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=WIFI:S:Love_Valentine;T:WPA;P:Valentine;;"
+                        alt="WiFi QR Code" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <p class="qr-text">Scan to Connect Instantly</p>
+            </div>
 
-  moveIndicator(selectedLabel);
+            <!-- New Environment Feature: Love Dare -->
+            <div class="empty-state" style="margin-top: 30px; border: 2px solid var(--primary-pink);">
+                <h3>🌹 Daily Love Dare</h3>
+                <p id="dare-text" style="font-style: italic; margin: 15px 0;">"Click to reveal your challenge..."</p>
+                <button class="btn btn-copy" style="font-size: 0.8rem; padding: 10px 20px;"
+                    onclick="generateDare()">Reveal Dare</button>
+            </div>
+        </div>
 
-  function createParticles(label, count = 12) {
-    const rect = label.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+        <!-- Search Section (Love Calculator) -->
+        <div id="search-section" class="content-section">
+            <h1>Love Calculator ❤️</h1>
+            <div class="empty-state">
+                <p>Calculate your compatibility!</p>
+                <div class="love-meter-container">
+                    <input type="text" id="name1" placeholder="Your Name"
+                        style="width: 100%; padding: 12px; border-radius: 12px; border: none; margin-bottom: 12px; outline: none; background: rgba(255,255,255,0.9);">
+                    <input type="text" id="name2" placeholder="Their Name"
+                        style="width: 100%; padding: 12px; border-radius: 12px; border: none; margin-bottom: 12px; outline: none; background: rgba(255,255,255,0.9);">
+                    <button class="btn btn-connect" style="width: 100%; padding: 12px;"
+                        onclick="calculateLove()">Calculate!</button>
 
-    for (let i = 0; i < count; i++) {
-      const particle = document.createElement('span');
-      particle.classList.add('particle');
-      const angle = Math.random() * 2 * Math.PI;
-      const distance = 20 + Math.random() * 10;
-      particle.style.left = centerX + 'px';
-      particle.style.top = centerY + 'px';
-      particle.style.setProperty('--x', distance * Math.cos(angle) + 'px');
-      particle.style.setProperty('--y', distance * Math.sin(angle) + 'px');
-      particle.style.animation = 'particleMove 0.8s forwards';
-      label.appendChild(particle);
-      setTimeout(() => particle.remove(), 800);
-    }
-  }
+                    <div id="meter-result" style="display: none; margin-top: 25px;">
+                        <h3 id="love-percent" style="font-size: 2rem; margin-bottom: 5px;">100%</h3>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="love-fill"></div>
+                        </div>
+                        <p id="love-message" style="font-size: 1rem; font-weight: 500;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  function createTrail(x, y) {
-    const trail = document.createElement('span');
-    trail.classList.add('trail');
-    trail.style.left = x + 'px';
-    trail.style.top = y + 'px';
-    const angle = (Math.random() - 0.5) * Math.PI;
-    const distance = 10 + Math.random() * 10;
-    trail.style.setProperty('--x', distance * Math.cos(angle) + 'px');
-    trail.style.setProperty('--y', distance * Math.sin(angle) + 'px');
-    trail.style.animation = 'trailMove 1s forwards';
-    document.body.appendChild(trail);
-    setTimeout(() => trail.remove(), 1000); // linger longer
-  }
+        <!-- Notification Section -->
+        <div id="notification-section" class="content-section">
+            <h1>Love Notes ❤️</h1>
+            <div class="empty-state" style="text-align: left;">
+                <div id="notes-container">
+                    <div style="border-left: 4px solid white; padding-left: 15px; margin-bottom: 20px;">
+                        <small style="opacity: 0.7;">Just now</small>
+                        <p style="font-size: 1.1rem; margin-top: 5px;"><strong>"You're the CSS to my HTML! 💕"</strong>
+                        </p>
+                    </div>
+                </div>
+                <button class="btn btn-connect" style="width: 100%; padding: 10px; font-size: 0.8rem;"
+                    onclick="generateNote()">Generate New Note</button>
+            </div>
+        </div>
 
-  labels.forEach(label => {
-    label.addEventListener('click', e => {
-      selectedLabel = label;
+        <!-- Favorites Section -->
+        <div id="favorites-section" class="content-section">
+            <h1>Our Favorites ❤️</h1>
+            <div class="empty-state">
+                <p>Build your bucket list together!</p>
+                <div style="display: flex; gap: 10px; margin: 15px 0;">
+                    <input type="text" id="fav-input" placeholder="Add a shared goal..."
+                        style="flex: 1; padding: 10px; border-radius: 8px; border: none; outline: none;">
+                    <button class="btn btn-connect" style="padding: 10px 15px;" onclick="addFavorite()"><i
+                            class="fas fa-plus"></i></button>
+                </div>
+                <ul id="favorites-list" style="list-style: none; text-align: left; padding: 0;">
+                    <li style="margin-bottom: 10px; display: flex; justify-content: space-between;"><span>🌹 Your
+                            Smile</span> <i class="fas fa-times" onclick="this.parentElement.remove()"
+                            style="cursor:pointer; opacity: 0.5;"></i></li>
+                </ul>
+            </div>
+        </div>
 
-      const rect = label.getBoundingClientRect();
+        <!-- Profile Section -->
+        <div id="profile-section" class="content-section">
+            <h1>Love Profile ❤️</h1>
+            <div class="empty-state">
+                <div
+                    style="width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: var(--primary-pink); font-size: 2.5rem; position: relative;">
+                    <i class="fas fa-user-heart"></i>
+                    <div id="secret-badge"
+                        style="position: absolute; bottom: -5px; right: -5px; background: gold; color: #000; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; display: none;">
+                        🏆</div>
+                </div>
+                <p><strong>Status:</strong> <span id="love-status">Deeply in Love</span></p>
 
-      // Ripple effect
-      const ripple = document.createElement('span');
-      ripple.classList.add('ripple');
-      ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
-      ripple.style.left = e.clientX - rect.left - rect.width/2 + 'px';
-      ripple.style.top = e.clientY - rect.top - rect.height/2 + 'px';
-      label.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
+                <div style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                        <span>Love Level</span>
+                        <span id="level-text">Lv. 1</span>
+                    </div>
+                    <div class="meter-bar" style="margin: 0;">
+                        <div class="meter-fill" id="love-level-fill" style="width: 0%;"></div>
+                    </div>
+                    <small style="opacity: 0.7; margin-top: 5px; display: block;" id="next-goal">Interact to level
+                        up!</small>
+                </div>
 
-      // Particle burst
-      createParticles(label, 15);
+                <div id="secret-task"
+                    style="display: none; margin-top: 25px; padding: 15px; background: rgba(255,215,0,0.2); border: 1px dashed gold; border-radius: 15px;">
+                    <p>✨ <strong>Secret Task Unlocked!</strong> ✨</p>
+                    <p style="font-size: 0.9rem;">Plan a surprise date for next weekend! 🌹</p>
+                </div>
+            </div>
+        </div>
 
-      moveIndicator(label);
-    });
+        <footer>
+            Made with ❤️ for someone special
+        </footer>
 
-    // Hover indicator trail
-    label.addEventListener('mousemove', e => {
-      const rect = label.getBoundingClientRect();
-      const hoverOffset = rect.left + rect.width / 2 - indicator.offsetWidth / 2;
-      indicator.style.left = hoverOffset + 'px';
-      indicator.style.width = rect.width + 'px';
+        <!-- Tab Bar -->
+        <nav class="menu">
+            <input type="radio" name="tab" id="home" checked>
+            <label for="home" data-tooltip="Home"><i class="fas fa-home"></i></label>
 
-      // Create lingering trail
-      createTrail(e.clientX, e.clientY);
-    });
+            <input type="radio" name="tab" id="search">
+            <label for="search" data-tooltip="Search"><i class="fas fa-search"></i></label>
 
-    label.addEventListener('mouseleave', () => {
-      moveIndicator(selectedLabel);
-    });
-  });
+            <input type="radio" name="tab" id="notification">
+            <label for="notification" data-tooltip="Notification"><i class="fas fa-bell"></i></label>
 
-  window.addEventListener('resize', () => moveIndicator(selectedLabel));
-</script>
+            <input type="radio" name="tab" id="favorites">
+            <label for="favorites" data-tooltip="Favorites"><i class="fas fa-heart"></i></label>
 
+            <input type="radio" name="tab" id="profile">
+            <label for="profile" data-tooltip="Profile"><i class="fas fa-user"></i></label>
+
+            <div class="indicator"></div>
+        </nav>
+    </main>
+
+    <div class="overlay" id="overlay" onclick="hidePopup()"></div>
+    <div class="popup" id="popup">
+        <h2 style="color: var(--primary-pink); margin-bottom: 15px;">💕 Ready to Connect!</h2>
+        <p style="margin-bottom: 20px;">Use Password: <strong>Valentine</strong> to connect</p>
+        <button class="btn btn-connect" style="width: 100%;" onclick="hidePopup()">Got it!</button>
+    </div>
+
+    <script>
+        // Floating hearts generation
+        function createHeart() {
+            const container = document.getElementById('hearts-container');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        setInterval(createHeart, 300);
+
+        // Copy Password function
+        function copyPassword() {
+            const password = document.getElementById('wifi-password').innerText;
+            navigator.clipboard.writeText(password).then(() => {
+                const copyBtn = document.querySelector('.btn-copy');
+                const originalText = copyBtn.innerText;
+                copyBtn.innerText = 'Copied! ✨';
+                setTimeout(() => {
+                    copyBtn.innerText = originalText;
+                }, 2000);
+            });
+        }
+
+        // Popup functions
+        function showPopup() {
+            document.getElementById('popup').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function hidePopup() {
+            document.getElementById('popup').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        // Hide Preloader
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.classList.add('hidden');
+            }, 1000); // Small delay for effect
+        });
+
+        // Tab Bar Logic
+        const indicator = document.querySelector('.indicator');
+        const labels = document.querySelectorAll('nav.menu label');
+        let selectedLabel = document.querySelector('input[name="tab"]:checked + label');
+
+        function moveIndicator(target) {
+            const offset = target.offsetLeft + target.offsetWidth / 2 - indicator.offsetWidth / 2;
+            indicator.style.left = offset + 'px';
+            indicator.style.width = target.offsetWidth + 'px';
+        }
+
+        // Initialize indicator position
+        window.addEventListener('load', () => moveIndicator(selectedLabel));
+
+        function createParticles(label, count = 12) {
+            const rect = label.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('span');
+                particle.classList.add('particle');
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = 20 + Math.random() * 10;
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                particle.style.setProperty('--x', distance * Math.cos(angle) + 'px');
+                particle.style.setProperty('--y', distance * Math.sin(angle) + 'px');
+                particle.style.animation = 'particleMove 0.8s forwards';
+                label.appendChild(particle);
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        function createTrail(x, y) {
+            const trail = document.createElement('span');
+            trail.classList.add('trail');
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            const angle = (Math.random() - 0.5) * Math.PI;
+            const distance = 10 + Math.random() * 10;
+            trail.style.setProperty('--x', distance * Math.cos(angle) + 'px');
+            trail.style.setProperty('--y', distance * Math.sin(angle) + 'px');
+            trail.style.animation = 'trailMove 1s forwards';
+            document.body.appendChild(trail);
+            setTimeout(() => trail.remove(), 1000);
+        }
+
+        labels.forEach(label => {
+            label.addEventListener('click', e => {
+                const targetId = label.getAttribute('for');
+                switchSection(targetId);
+
+                selectedLabel = label;
+                const rect = label.getBoundingClientRect();
+
+                // Ripple effect
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+                ripple.style.left = e.clientX - rect.left - rect.width / 2 + 'px';
+                ripple.style.top = e.clientY - rect.top - rect.height / 2 + 'px';
+                label.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+
+                // Particle burst
+                createParticles(label, 15);
+                moveIndicator(label);
+            });
+
+            // Hover indicator trail
+            label.addEventListener('mousemove', e => {
+                const rect = label.getBoundingClientRect();
+                const hoverOffset = rect.left + rect.width / 2 - indicator.offsetWidth / 2;
+                indicator.style.left = hoverOffset + 'px';
+                indicator.style.width = rect.width + 'px';
+
+                // Create lingering trail
+                createTrail(e.clientX, e.clientY);
+            });
+
+            label.addEventListener('mouseleave', () => {
+                moveIndicator(selectedLabel);
+            });
+        });
+
+        function switchSection(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show target section
+            const sectionId = tabId + '-section';
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
+        // Music Logic
+        function toggleMusic(btn) {
+            const music = document.getElementById('bg-music');
+            const icon = btn.querySelector('i');
+
+            if (music.paused) {
+                music.play().catch(e => console.log("User interaction required for audio"));
+                btn.classList.add('playing');
+                icon.classList.remove('fa-music');
+                icon.classList.add('fa-pause');
+            } else {
+                music.pause();
+                btn.classList.remove('playing');
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-music');
+            }
+        }
+
+        // Extra polish: Activate heartbeat when copying password
+        function showPopup() {
+            document.getElementById('popup').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('main-card').classList.add('active-connection');
+        }
+
+        function hidePopup() {
+            document.getElementById('popup').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            // Keep heartbeat optional or remove it here
+        }
+
+        window.addEventListener('resize', () => moveIndicator(selectedLabel));
+
+        // Love Calculator Logic
+        function calculateLove() {
+            const n1 = document.getElementById('name1').value;
+            const n2 = document.getElementById('name2').value;
+            if (!n1 || !n2) return alert("Please enter both names!");
+
+            const resultDiv = document.getElementById('meter-result');
+            const fill = document.getElementById('love-fill');
+            const percent = document.getElementById('love-percent');
+            const msg = document.getElementById('love-message');
+
+            resultDiv.style.display = 'block';
+
+            // Funny romantic logic: always high percent for "Valentine"
+            let randomPercent = Math.floor(Math.random() * 40) + 60; // 60-100%
+            if (n1.toLowerCase().includes('valentine') || n2.toLowerCase().includes('valentine')) {
+                randomPercent = 100;
+            }
+
+            percent.innerText = randomPercent + '%';
+            fill.style.width = '0%';
+            setTimeout(() => fill.style.width = randomPercent + '%', 100);
+
+            if (randomPercent > 90) msg.innerText = "Soulmates! Perfect Connection. 💖";
+            else if (randomPercent > 80) msg.innerText = "Wow! A beautiful spark. ✨";
+            else msg.innerText = "A match made in heaven. 🌹";
+
+            updateLoveLevel(5); // Progress the level
+        }
+
+        // New Environment Logic
+        const dares = [
+            "Give your partner a 10-second hug. 🤗",
+            "Whisper something sweet in their ear. 💖",
+            "Take a cute selfie together right now! 📸",
+            "Tell them one thing you admire about them. ✨",
+            "Hold hands for the next 5 minutes. 🤝",
+            "Show them a funny meme or video. 😂"
+        ];
+
+        const notes = [
+            "I'm so lucky to have you. 🌹",
+            "You make my heart skip a beat. 💓",
+            "Can't imagine my life without you. ✨",
+            "You're the person I want to talk to before I go to sleep. 🌙",
+            "Every day with you is a new adventure. 🚀"
+        ];
+
+        let lovePoints = 0;
+
+        function generateDare() {
+            const dare = dares[Math.floor(Math.random() * dares.length)];
+            const dareText = document.getElementById('dare-text');
+            dareText.classList.add('fadeIn'); // Assuming fadeIn is defined
+            dareText.innerText = dare;
+            updateLoveLevel(10);
+        }
+
+        function generateNote() {
+            const note = notes[Math.floor(Math.random() * notes.length)];
+            const container = document.getElementById('notes-container');
+            const newNote = document.createElement('div');
+            newNote.style.borderLeft = "4px solid white";
+            newNote.style.paddingLeft = "15px";
+            newNote.style.marginBottom = "20px";
+            newNote.innerHTML = `<small style="opacity: 0.7;">Just now</small><p style="font-size: 1.1rem; margin-top: 5px;"><strong>"${note}"</strong></p>`;
+            container.prepend(newNote);
+            updateLoveLevel(5);
+        }
+
+        function addFavorite() {
+            const input = document.getElementById('fav-input');
+            const value = input.value.trim();
+            if (!value) return;
+
+            const list = document.getElementById('favorites-list');
+            const item = document.createElement('li');
+            item.style.marginBottom = "10px";
+            item.style.display = "flex";
+            item.style.justifyContent = "space-between";
+            item.innerHTML = `<span>✨ ${value}</span> <i class="fas fa-times" onclick="this.parentElement.remove()" style="cursor:pointer; opacity: 0.5;"></i>`;
+            list.prepend(item);
+            input.value = '';
+            updateLoveLevel(5);
+        }
+
+        function updateLoveLevel(points) {
+            lovePoints += points;
+
+            const fill = document.getElementById('love-level-fill');
+            const levelText = document.getElementById('level-text');
+            const status = document.getElementById('love-status');
+            const secretTask = document.getElementById('secret-task');
+            const secretBadge = document.getElementById('secret-badge');
+
+            const level = Math.floor(lovePoints / 50) + 1;
+            const progress = (lovePoints % 50) * 2; // 50 points per level
+
+            fill.style.width = progress + '%';
+            levelText.innerText = 'Lv. ' + level;
+
+            if (level >= 2) {
+                status.innerText = "Eternal Soulmates ✨";
+                secretTask.style.display = 'block';
+                secretBadge.style.display = 'block';
+                document.getElementById('next-goal').innerText = "Max Level Reached! ❤️";
+            } else {
+                document.getElementById('next-goal').innerText = (50 - (lovePoints % 50)) + " points until level up!";
+            }
+        }
+    </script>
 </body>
+
 </html>
