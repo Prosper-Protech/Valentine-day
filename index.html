@@ -3,37 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Love Journey</title>
+    <title>Our Cinematic Valentine</title>
     <style>
-        :root {
-            --deep-red: #800e13;
-            --rose-pink: #ff4d6d;
-            --soft-cream: #fff0f3;
-            --beach-sand: #f2e9e4;
+        /* CSS RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            overflow: hidden; 
+            font-family: 'Georgia', serif; 
+            background: #800e13; 
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            font-family: 'Georgia', serif;
-            background-color: var(--soft-cream);
-        }
-
-        /* --- Cinematic Background Journey --- */
-        .world-container {
-            width: 300%; /* Three "worlds" wide */
+        /* CINEMATIC BACKGROUND SCENES */
+        .world-wrapper {
             display: flex;
+            width: 300vw;
             height: 100vh;
-            animation: travel 40s linear infinite alternate;
+            animation: moveWorld 30s infinite alternate ease-in-out;
         }
 
-        @keyframes travel {
-            0% { transform: translateX(0); } /* Love World */
-            50% { transform: translateX(-33.33%); } /* The Way */
-            100% { transform: translateX(-66.66%); } /* The Beach */
+        @keyframes moveWorld {
+            0% { transform: translateX(0); }         /* Scene 1: Love Garden */
+            50% { transform: translateX(-100vw); }   /* Scene 2: The Way */
+            100% { transform: translateX(-200vw); }  /* Scene 3: The Beach */
         }
 
+        .scene {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .garden { background: linear-gradient(to bottom, #ff4d6d, #800e13); }
+        .the-way { background: linear-gradient(to bottom, #ff758f, #ff4d6d); }
+        .beach { background: linear-gradient(to bottom, #a2d2ff, #f2e9e4); }
+
+        /* THE WALKING COUPLE */
+        .travelers {
+            position: fixed;
+            bottom: 15%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 5;
+        }
+        .couple { font-size: 4rem; animation: bob 1.5s infinite ease-in-out; }
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* MAIN UI CARD */
+        .card-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .valentine-card {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border: 8px solid #ff4d6d;
+            text-align: center;
+        }
+
+        h1 { color: #800e13; font-size: 2rem; margin-bottom: 15px; }
+        p { color: #444; margin-bottom: 20px; font-weight: bold; }
+
+        /* BUTTONS */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+        }
+
+        .wifi-btn { background-color: #800e13; color: white; }
+        .love-btn { background-color: #ff4d6d; color: white; }
+        .btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+        /* LOVE ANIMATIONS */
+        #heart-shower {
+            display: none;
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-top: 15px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* FLOATING ROSES */
+        .floating-rose {
+            position: absolute;
+            opacity: 0.6;
+            animation: spin 10s infinite linear;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="world-wrapper">
+        <div class="scene garden">
+            <div class="floating-rose" style="top:10%; left:10%; font-size: 3rem;">🌹</div>
+            <div class="floating-rose" style="top:20%; right:15%; font-size: 2rem;">🌹</div>
+        </div>
+        <div class="scene the-way">
+            <h2 style="color:white; opacity: 0.5;">Walking Together...</h2>
+        </div>
+        <div class="scene beach">
+            <div class="floating-rose" style="bottom:20%; left:20%; font-size: 4rem;">☀️</div>
+        </div>
+    </div>
+
+    <div class="travelers">
+        <div class="couple">🚶‍♂️👩‍❤️‍👨🚶‍♀️</div>
+    </div>
+
+    <div class="card-container">
+        <div class="valentine-card">
+            <h1>🌹 Happy Valentine's Day 🌹</h1>
+            <p>Stay connected to my heart<br>(and my WiFi)</p>
+            
+            <a href="WIFI:S:MyNetwork;T:WPA;P:Velentine;;" class="btn wifi-btn">Tap to Connect WiFi</a>
+            
+            <button class="btn love-btn" onclick="startLove()">Be My Valentine?</button>
+
+            <div id="heart-shower">❤️ I LOVE YOU! ❤️</div>
+        </div>
+    </div>
+
+    <script>
+        function startLove() {
+            // Show the love message
+            document.getElementById('heart-shower').style.display = 'block';
+            
+            // Create flying hearts
+            for (let i = 0; i < 15; i++) {
+                setTimeout(createHeart, i * 200);
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.bottom = '-10vh';
+            heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            heart.style.zIndex = '999';
+            heart.style.transition = 'transform 4s ease-out, opacity 4s';
+            
+            document.body.appendChild(heart);
+
+            // Animate up
+            setTimeout(() => {
+                heart.style.transform = `translateY(-110vh) rotate(${Math.random() * 360}deg)`;
+                heart.style.opacity = '0';
+            }, 50);
+
+            // Cleanup
+            setTimeout(() => { heart.remove(); }, 4000);
+        }
+    </script>
+</body>
+</html>
         .scene {
             width: 100vw;
             height: 100vh;
