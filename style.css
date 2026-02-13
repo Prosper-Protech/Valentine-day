@@ -1,40 +1,75 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #ff4e50, #fc913a);
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    text-align: center;
+    overflow: hidden;
     color: white;
+    text-align: center;
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
     padding: 30px;
-    border-radius: 20px;
+    border-radius: 25px;
     width: 90%;
-    max-width: 500px;
-    backdrop-filter: blur(10px);
+    max-width: 400px;
+    z-index: 10;
 }
 
-h1 {
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    margin-bottom: 20px;
-}
-
-.wifi-box {
+.wifi-card {
     background: rgba(255,255,255,0.2);
     padding: 15px;
     border-radius: 15px;
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
 button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.connect-btn {
+    background: #fff;
+    color: #ff4e50;
+}
+
+.music-btn {
+    background: #ff4e50;
+    color: white;
+}
+
+#qrcode {
+    margin-top: 15px;
+}
+
+.footer {
+    margin-top: 15px;
+    font-size: 12px;
+}
+
+/* Floating Hearts */
+.hearts::before,
+.hearts::after {
+    content: "💖 💘 💕 💞 💓 💗";
+    position: absolute;
+    width: 100%;
+    animation: floatHearts 10s linear infinite;
+    font-size: 25px;
+}
+
+@keyframes floatHearts {
+    0% { transform: translateY(100vh); }
+    100% { transform: translateY(-100vh); }
+}button {
     background: #fff;
     color: #ff4e50;
     border: none;
