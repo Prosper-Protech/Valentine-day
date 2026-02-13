@@ -2,38 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>💕 Valentine WiFi · Connect & Celebrate</title>
-    <!-- Tailwind (light) + QR code library -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap');
-        
-        /* simple fallback background */
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(145deg, #2c1a2a 0%, #4a1e3a 100%);
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        body { margin: 0; overflow: hidden; background: #000; color: white; }
+        .love-font { font-family: 'Dancing Script', cursive; }
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+        .ui-layer { position: relative; z-index: 10; pointer-events: none; }
+        .glass { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255,255,255,0.2); 
         }
-        .font-love { font-family: 'Dancing Script', cursive; }
-
-        /* love card — fully opaque background for readability */
-        .love-card {
-            background: rgba(30, 10, 20, 0.9);
-            backdrop-filter: blur(4px);
-            border: 2px solid #ff99bb;
-            border-radius: 48px;
-            box-shadow: 0 30px 50px #ff1a4c80, 0 0 0 2px #ffb6c1 inset;
+        .clickable { pointer-events: auto; }
+        .walking-anime { animation: bounce 1.5s infinite ease-in-out; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
 
-        /* walking couple animation */
-        .walking-couple {
-            animation: bounce 2.2s infinite;
+    <canvas id="canvas3d"></canvas>
+
+    <div class="ui-layer w-full max-w-sm px-6">
+        <div class="glass p-8 rounded-[2.5rem] text-center shadow-2xl">
+            <h1 class="love-font text-5xl text-rose-500 mb-4">Happy Valentine's Day</h1>
+            
+            <div class="walking-anime text-7xl my-10">👩‍❤️‍👨</div>
+
+            <div class="space-y-4">
+                <a href="WIFI:S:MyNetwork;T:WPA;P:Velentine;;" 
+                   class="clickable block w-full py-4 bg-rose-600 rounded-2xl font-bold text-white shadow-lg active:scale-95 transition-transform">
+                    Tap to Connect WiFi
+                </a>
+
+                <div class="text-xs text-rose-200 uppercase tracking-widest opacity-70">
+                    Password: <span class="text-white font-bold italic">Velentine</span>
+                </div>
+
+                <button onclick="startLove()" 
+                        class="clickable block w-full py-4 bg-white text-rose-600 rounded-2xl font-black shadow-xl active:scale-95 transition-transform">
+                    Be My Valentine?
+                </button>
+            </div>
+            
+            <div id="heart-msg" class="hidden mt-6 text-2xl animate-pulse text-rose-400">💖 I LOVE YOU! 💖</div>
+        </div>
+    </div>
+
+    <script>
+        // 3D Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Particle World
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(5000 * 3);
+        for(let i=0; i<15000; i++) pos[i] = (Math.random() - 0.5) * 10;
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const mat = new THREE.PointsMaterial({ size: 0.02, color: 0xff4d6d });
+        const points = new THREE.Points(geo, mat);
+        scene.add(points);
+        camera.position.z = 3;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            points.rotation.y += 0.002;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function startLove() {
+            document.getElementById('heart-msg').classList.remove('hidden');
+            mat.color.setHex(0xffffff); // Change world to white sparklers
+        }
+    </script>
+</body>
+</html>
             filter: drop-shadow(0 0 20px #ff99bb);
             font-size: 5rem;
             line-height: 1;
