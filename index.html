@@ -2,38 +2,169 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Love Journey | 3D Experience</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Cinematic Love Story</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap');
         
-        body { margin: 0; overflow: hidden; background: #1a0002; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Poppins', sans-serif; }
         .font-love { font-family: 'Dancing Script', cursive; }
-        canvas { display: block; }
         
-        /* Glassmorphism for the UI */
+        /* Glassmorphism Effect */
         .glass {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(128, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
 
-        /* Animation for the couple */
-        .walking-couple {
-            animation: float 3s ease-in-out infinite;
+        /* Anime Walking Animation */
+        .anime-journey {
+            animation: walk-bounce 2s infinite ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
         }
-        @keyframes float {
+        @keyframes walk-bounce {
             0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-20px) scale(1.05); }
+            50% { transform: translateY(-15px) scale(1.05); }
         }
+
+        canvas { position: fixed; top: 0; left: 0; z-index: 0; }
+        .ui-content { position: relative; z-index: 10; pointer-events: none; }
+        .pointer-all { pointer-events: all; }
     </style>
 </head>
-<body class="flex items-center justify-center h-screen">
+<body class="flex items-center justify-center min-h-screen">
 
-    <canvas id="loveCanvas" class="fixed inset-0 z-0"></canvas>
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="ui-content w-full max-w-sm px-4">
+        <div class="glass rounded-[40px] p-8 text-center pointer-all border-t-4 border-rose-500">
+            
+            <div class="text-rose-500 text-6xl mb-4">🌹</div>
+            <h1 class="text-4xl font-love text-white mb-2 leading-tight">Happy Valentine's Day</h1>
+            <p class="text-rose-200 text-sm font-light mb-8 italic">Traveling the world to be with you...</p>
+
+            <div class="anime-journey text-7xl my-10">
+                👩‍❤️‍👨
+            </div>
+
+            <div class="space-y-4">
+                <a href="WIFI:S:Network_Name;T:WPA;P:Velentine;;" 
+                   class="block w-full py-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-95">
+                    Tap to Connect WiFi
+                </a>
+
+                <button onclick="copyPassword()" 
+                        class="block w-full py-3 border border-rose-400/30 text-rose-100 rounded-2xl text-xs tracking-widest uppercase">
+                    Password: <span class="text-white font-bold ml-1">Velentine</span>
+                </button>
+
+                <button onclick="celebrate()" 
+                        class="block w-full py-4 bg-white text-rose-600 rounded-2xl font-black text-lg shadow-2xl hover:bg-rose-50 transition-all">
+                    Be My Valentine?
+                </button>
+            </div>
+
+            <div id="status" class="mt-4 text-rose-300 font-bold h-6"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- THREE.JS 3D SCENE (Cinematic Love World) ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Particle System (Starry Love World)
+        const particlesGeometry = new THREE.BufferGeometry();
+        const count = 3000;
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+
+        for(let i = 0; i < count * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 10;
+            colors[i] = Math.random();
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.015,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 3;
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.0005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive Resizing
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- INTERACTION LOGIC ---
+        function copyPassword() {
+            navigator.clipboard.writeText("Velentine");
+            const status = document.getElementById('status');
+            status.innerText = "❤️ Password Copied!";
+            setTimeout(() => status.innerText = "", 3000);
+        }
+
+        function celebrate() {
+            const status = document.getElementById('status');
+            status.innerHTML = "<span class='text-2xl animate-pulse'>💖 I LOVE YOU! 💖</span>";
+            
+            // Speed up 3D world
+            particlesMesh.rotation.y += 0.5;
+            
+            // Create mini confetti heart shower
+            for(let i=0; i<20; i++) {
+                createFloatingHeart();
+            }
+        }
+
+        function createFloatingHeart() {
+            const h = document.createElement('div');
+            h.innerHTML = '❤️';
+            h.style.position = 'fixed';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.bottom = '-10vh';
+            h.style.fontSize = '2rem';
+            h.style.zIndex = '100';
+            h.style.transition = 'all 3s ease-out';
+            document.body.appendChild(h);
+
+            setTimeout(() => {
+                h.style.transform = `translateY(-110vh) rotate(${Math.random() * 360}deg)`;
+                h.style.opacity = '0';
+            }, 100);
+            
+            setTimeout(() => h.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
 
     <div class="relative z-10 w-full max-w-sm p-8 mx-4 glass rounded-3xl text-center text-white">
         <h1 class="text-5xl font-love text-red-500 mb-2 drop-shadow-lg">Happy Valentine's Day</h1>
