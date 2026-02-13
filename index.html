@@ -2,38 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine's Journey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Valentine's Day</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
-        body { margin: 0; overflow: hidden; background: #000; color: white; }
-        .love-font { font-family: 'Dancing Script', cursive; }
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
-        .ui-layer { position: relative; z-index: 10; pointer-events: none; }
-        .glass { 
-            background: rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255,255,255,0.2); 
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap');
+        
+        * { cursor: none !important; margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; overflow: hidden; font-family: 'Poppins', sans-serif; touch-action: none; }
+        .font-love { font-family: 'Dancing Script', cursive; }
+
+        /* Custom Love Arrow Cursor */
+        #cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4d6d'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") no-repeat;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
         }
-        .clickable { pointer-events: auto; }
-        .walking-anime { animation: bounce 1.5s infinite ease-in-out; }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .anime-couple {
+            animation: walkLoop 3s infinite ease-in-out;
+            filter: drop-shadow(0 0 15px #ff4d6d);
+        }
+        @keyframes walkLoop {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-25px) rotate(2deg); }
+        }
+
+        .sprinkle {
+            position: absolute;
+            pointer-events: none;
+            background: #ff4d6d;
+            border-radius: 50%;
+            z-index: 1000;
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen">
 
-    <canvas id="canvas3d"></canvas>
+    <div id="cursor" class="hidden md:block"></div>
+    <canvas id="loveWorld" class="fixed inset-0 z-0"></canvas>
 
-    <div class="ui-layer w-full max-w-sm px-6">
-        <div class="glass p-8 rounded-[2.5rem] text-center shadow-2xl">
-            <h1 class="love-font text-5xl text-rose-500 mb-4">Happy Valentine's Day</h1>
-            
-            <div class="walking-anime text-7xl my-10">👩‍❤️‍👨</div>
+    <div class="relative z-10 w-full max-w-sm px-4 pointer-events-none">
+        <div class="glass rounded-[40px] p-8 text-center pointer-events-auto border-b-4 border-rose-500">
+            <h1 class="text-5xl font-love text-rose-500 mb-2">Happy Valentine's</h1>
+            <p class="text-rose-200 text-xs tracking-widest uppercase mb-6">Stay Connected Forever</p>
+
+            <div class="anime-couple text-8xl my-8">👩‍❤️‍👨</div>
+
+            <div class="space-y-4">
+                <a href="WIFI:S:MyWiFi;T:WPA;P:Valentine;;" 
+                   class="block w-full py-4 bg-rose-600 text-white rounded-2xl font-bold shadow-lg hover:bg-rose-700 transition-all active:scale-95">
+                    Tap to Connect WiFi
+                </a>
+
+                <div class="text-[10px] text-rose-300 opacity-60">
+                    OR SCAN QR CODE BELOW
+                </div>
+
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WIFI:S:MyWiFi;T:WPA;P:Valentine;;" 
+                     alt="WiFi QR" class="mx-auto rounded-xl border-4 border-white/20 w-32 h-32">
+
+                <button onclick="beValentine()" 
+                        class="block w-full py-4 bg-white text-rose-600 rounded-2xl font-black text-lg shadow-xl hover:bg-rose-50 transition-all">
+                    Be My Valentine?
+                </button>
+            </div>
+            <div id="loveStatus" class="mt-4 h-6 text-rose-400 font-bold"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Three.js Background
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('loveWorld'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 4000;
+        const posArray = new Float32Array(starCount * 3);
+        for(let i=0; i<starCount*3; i++) posArray[i] = (Math.random() - 0.5) * 10;
+        starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const starMat = new THREE.PointsMaterial({ size: 0.015, color: 0xff4d6d, transparent: true });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+        camera.position.z = 3;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            stars.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 2. Custom Cursor & Sprinkles
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            if(Math.random() > 0.8) createSprinkle(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('click', (e) => {
+            for(let i=0; i<15; i++) createSprinkle(e.clientX, e.clientY);
+        });
+
+        function createSprinkle(x, y) {
+            const s = document.createElement('div');
+            s.className = 'sprinkle';
+            const size = Math.random() * 6 + 2;
+            s.style.width = size + 'px';
+            s.style.height = size + 'px';
+            s.style.left = x + 'px';
+            s.style.top = y + 'px';
+            document.body.appendChild(s);
+
+            const destX = x + (Math.random() - 0.5) * 100;
+            const destY = y + (Math.random() - 0.5) * 100;
+
+            s.animate([
+                { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                { transform: `translate(${destX - x}px, ${destY - y}px) scale(0)`, opacity: 0 }
+            ], { duration: 1000, easing: 'ease-out' }).onfinish = () => s.remove();
+        }
+
+        // 3. Valentine Action
+        function beValentine() {
+            document.getElementById('loveStatus').innerHTML = "💖 FOREVER YOURS 💖";
+            starMat.color.setHex(0xffffff);
+            for(let i=0; i<50; i++) {
+                setTimeout(() => createSprinkle(window.innerWidth/2, window.innerHeight/2), i * 50);
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
 
             <div class="space-y-4">
                 <a href="WIFI:S:MyNetwork;T:WPA;P:Velentine;;" 
