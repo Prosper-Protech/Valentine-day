@@ -2,38 +2,124 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Our Love Journey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Love Journey | 3D Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        /* --- 1. RESET & MOBILE FIXES --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;600&display=swap');
         
-        body, html { 
-            height: 100%; 
-            width: 100%; 
-            overflow: hidden; 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #4a0000;
+        body { margin: 0; overflow: hidden; background: #1a0002; }
+        .font-love { font-family: 'Dancing Script', cursive; }
+        canvas { display: block; }
+        
+        /* Glassmorphism for the UI */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(128, 0, 0, 0.37);
         }
 
-        /* --- 2. THE WORLD (SCROLLING BACKGROUND) --- */
-        .world-wrapper {
-            display: flex;
-            width: 300%; /* 3 scenes wide */
-            height: 100%;
-            animation: moveWorld 45s infinite alternate ease-in-out;
+        /* Animation for the couple */
+        .walking-couple {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+
+    <canvas id="loveCanvas" class="fixed inset-0 z-0"></canvas>
+
+    <div class="relative z-10 w-full max-w-sm p-8 mx-4 glass rounded-3xl text-center text-white">
+        <h1 class="text-5xl font-love text-red-500 mb-2 drop-shadow-lg">Happy Valentine's Day</h1>
+        <p class="text-gray-200 font-light mb-8 italic">Traveling through the love world to find you...</p>
+
+        <div class="walking-couple text-7xl mb-10 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+            👩‍❤️‍👨
+        </div>
+
+        <div class="space-y-4">
+            <a href="WIFI:S:Your_Network;T:WPA;P:Velentine;;" 
+               class="block w-full py-4 bg-gradient-to-r from-red-600 to-rose-500 rounded-xl font-semibold shadow-lg active:scale-95 transition-transform">
+                Tap to Connect WiFi
+            </a>
+
+            <button onclick="copyPass()" 
+                    class="block w-full py-3 border border-red-400/50 rounded-xl text-sm hover:bg-white/10 transition-colors">
+                Password: <span class="font-bold">Velentine</span> (Tap to Copy)
+            </button>
+
+            <button onclick="beMine()" 
+                    class="block w-full py-4 bg-white text-red-600 rounded-xl font-bold shadow-xl hover:bg-rose-50 transition-colors">
+                Be My Valentine?
+            </button>
+        </div>
+
+        <div id="status" class="mt-4 text-xs text-rose-300 font-medium h-4"></div>
+    </div>
+
+    <script>
+        // --- THREE.JS 3D SCENE SETUP ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('loveCanvas'), antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Create Particles (Hearts/Stars)
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        for (let i = 0; i < 5000; i++) {
+            vertices.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
+        }
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        const material = new THREE.PointsMaterial({ color: 0xff4d6d, size: 3 });
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+
+        camera.position.z = 500;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            points.rotation.y += 0.001;
+            points.rotation.x += 0.0005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive 3D
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- INTERACTION LOGIC ---
+        function copyPass() {
+            navigator.clipboard.writeText("Velentine");
+            document.getElementById('status').innerText = "Password Copied! ❤️";
+            setTimeout(() => { document.getElementById('status').innerText = ""; }, 3000);
         }
 
-        @keyframes moveWorld {
-            0% { transform: translateX(0); }         /* Scene 1: Love Garden */
-            50% { transform: translateX(-33.33%); }  /* Scene 2: The Way */
-            100% { transform: translateX(-66.66%); } /* Scene 3: The Beach */
+        function beMine() {
+            // Explode more particles in 3D
+            material.color.setHex(0xffffff);
+            document.getElementById('status').innerHTML = "<span class='text-xl'>💖 I LOVE YOU! 💖</span>";
+            
+            // Camera zoom effect
+            let zoom = camera.position.z;
+            const interval = setInterval(() => {
+                if (camera.position.z > 200) camera.position.z -= 5;
+                else clearInterval(interval);
+            }, 10);
         }
-
-        .scene {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
+    </script>
+</body>
+</html>
             justify-content: center;
             align-items: center;
             position: relative;
