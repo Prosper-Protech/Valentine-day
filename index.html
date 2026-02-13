@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Happy Valentine's Day</title>
+    <title>Valentine's Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap');
         
         * { cursor: none !important; margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; overflow: hidden; font-family: 'Poppins', sans-serif; touch-action: none; }
+        body { background: #000; overflow: hidden; font-family: 'Poppins', sans-serif; touch-action: none; height: 100vh; width: 100vw; }
         .font-love { font-family: 'Dancing Script', cursive; }
 
         /* Custom Love Arrow Cursor */
         #cursor {
             position: fixed;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4d6d'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") no-repeat;
             pointer-events: none;
             z-index: 9999;
@@ -29,11 +29,142 @@
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
 
+        /* Real Interactive Anime Loop */
         .anime-couple {
-            animation: walkLoop 3s infinite ease-in-out;
+            animation: anime-walk 2.5s infinite ease-in-out;
+            display: inline-block;
+            filter: drop-shadow(0 0 15px rgba(255, 77, 109, 0.8));
+        }
+        @keyframes anime-walk {
+            0%, 100% { transform: translateY(0) scale(1) rotate(-3deg); }
+            50% { transform: translateY(-20px) scale(1.1) rotate(3deg); }
+        }
+
+        .sprinkle {
+            position: absolute;
+            pointer-events: none;
+            background: #ff4d6d;
+            border-radius: 50%;
+            z-index: 1000;
+        }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 0; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <div id="cursor" class="hidden md:block"></div>
+    <canvas id="loveWorld"></canvas>
+
+    <div class="relative z-10 w-full max-w-[340px] pointer-events-none">
+        <div class="glass rounded-[40px] p-6 sm:p-8 text-center pointer-events-auto border-b-8 border-rose-500 transition-all duration-500">
+            <h1 class="text-4xl sm:text-5xl font-love text-rose-500 mb-2 drop-shadow-lg">Happy Valentine's</h1>
+            <p class="text-rose-200 text-[10px] tracking-widest uppercase mb-4 opacity-80">Connected Together Forever</p>
+
+            <div class="anime-couple text-7xl sm:text-8xl my-6">👩‍❤️‍👨</div>
+
+            <div class="space-y-4">
+                <a href="WIFI:S:WiFi_Name;T:WPA;P:Valentine;;" 
+                   class="block w-full py-4 bg-rose-600 text-white rounded-2xl font-bold shadow-lg hover:bg-rose-700 active:scale-95 transition-all text-sm sm:text-base">
+                    Tap to Connect WiFi
+                </a>
+
+                <div class="p-2 bg-white/10 rounded-2xl inline-block border border-white/20">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WIFI:S:WiFi_Name;T:WPA;P:Valentine;;" 
+                         alt="WiFi QR" class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg">
+                </div>
+
+                <div class="text-[9px] text-rose-300 font-bold tracking-tighter uppercase opacity-60">
+                    Password: Valentine
+                </div>
+
+                <button onclick="beValentine()" 
+                        class="block w-full py-4 bg-white text-rose-600 rounded-2xl font-black text-lg shadow-2xl hover:bg-rose-50 active:scale-95 transition-all">
+                    Be My Valentine?
+                </button>
+            </div>
+            <div id="status" class="mt-4 h-6 text-rose-400 font-bold text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- THREE.JS BACKGROUND ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('loveWorld'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const posArray = new Float32Array(starCount * 3);
+        for(let i=0; i<starCount*3; i++) posArray[i] = (Math.random() - 0.5) * 10;
+        starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const starMat = new THREE.PointsMaterial({ size: 0.012, color: 0xff4d6d, transparent: true });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+        camera.position.z = 3;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            stars.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // --- INTERACTIVE SPRINKLES & CURSOR ---
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            if(Math.random() > 0.85) createSprinkle(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            for(let i=0; i<10; i++) createSprinkle(touch.clientX, touch.clientY);
+        });
+
+        function createSprinkle(x, y) {
+            const s = document.createElement('div');
+            s.className = 'sprinkle';
+            const size = Math.random() * 5 + 2;
+            s.style.width = size + 'px';
+            s.style.height = size + 'px';
+            s.style.left = x + 'px';
+            s.style.top = y + 'px';
+            document.body.appendChild(s);
+
+            const destX = x + (Math.random() - 0.5) * 120;
+            const destY = y + (Math.random() - 0.5) * 120;
+
+            s.animate([
+                { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                { transform: `translate(${destX - x}px, ${destY - y}px) scale(0)`, opacity: 0 }
+            ], { duration: 800, easing: 'ease-out' }).onfinish = () => s.remove();
+        }
+
+        // --- VALENTINE LOGIC ---
+        function beValentine() {
+            document.getElementById('status').innerText = "💖 FOREVER & ALWAYS 💖";
+            starMat.color.setHex(0xffffff);
+            const rect = document.querySelector('.glass').getBoundingClientRect();
+            for(let i=0; i<40; i++) {
+                setTimeout(() => createSprinkle(rect.left + Math.random() * rect.width, rect.top + Math.random() * rect.height), i * 30);
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
             filter: drop-shadow(0 0 15px #ff4d6d);
         }
         @keyframes walkLoop {
