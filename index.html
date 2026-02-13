@@ -2,29 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Cinematic Valentine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Love Journey</title>
     <style>
-        /* CSS RESET & BASE */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        /* --- 1. RESET & MOBILE FIXES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body, html { 
+            height: 100%; 
+            width: 100%; 
             overflow: hidden; 
-            font-family: 'Georgia', serif; 
-            background: #800e13; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #4a0000;
         }
 
-        /* CINEMATIC BACKGROUND SCENES */
+        /* --- 2. THE WORLD (SCROLLING BACKGROUND) --- */
         .world-wrapper {
             display: flex;
-            width: 300vw;
-            height: 100vh;
-            animation: moveWorld 30s infinite alternate ease-in-out;
+            width: 300%; /* 3 scenes wide */
+            height: 100%;
+            animation: moveWorld 45s infinite alternate ease-in-out;
         }
 
         @keyframes moveWorld {
             0% { transform: translateX(0); }         /* Scene 1: Love Garden */
-            50% { transform: translateX(-100vw); }   /* Scene 2: The Way */
-            100% { transform: translateX(-200vw); }  /* Scene 3: The Beach */
+            50% { transform: translateX(-33.33%); }  /* Scene 2: The Way */
+            100% { transform: translateX(-66.66%); } /* Scene 3: The Beach */
         }
 
         .scene {
@@ -34,6 +37,170 @@
             justify-content: center;
             align-items: center;
             position: relative;
+        }
+
+        /* Scenes Colors */
+        .garden { background: linear-gradient(180deg, #ff4d6d 0%, #800e13 100%); }
+        .the-way { background: linear-gradient(180deg, #ff758f 0%, #c9184a 100%); }
+        .beach { background: linear-gradient(180deg, #a2d2ff 0%, #f2e9e4 100%); }
+
+        /* --- 3. THE COUPLE ANIMATION --- */
+        .travel-container {
+            position: fixed;
+            bottom: 12vh; /* Keeps it above the bottom navigation on mobile */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            pointer-events: none; /* Allows clicks through to the card if needed */
+            z-index: 5;
+        }
+
+        .couple-walking {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* --- 4. THE INTERFACE CARD --- */
+        .ui-layer {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .valentine-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 380px;
+            padding: 30px 20px;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border: 4px solid #ff4d6d;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { color: #800e13; font-size: 1.8rem; margin-bottom: 10px; }
+        p { color: #555; font-size: 1rem; margin-bottom: 20px; line-height: 1.4; }
+
+        /* --- 5. MOBILE BUTTONS --- */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .wifi-btn { background: #800e13; color: white; }
+        .love-btn { background: #ff4d6d; color: white; }
+
+        .btn:active { transform: scale(0.95); } /* Feel for touch screens */
+
+        #love-message {
+            display: none;
+            color: #d00000;
+            font-size: 1.5rem;
+            margin-top: 15px;
+            font-weight: 900;
+            animation: heartPulse 1s infinite;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Floating Rose Elements */
+        .petal {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="world-wrapper">
+        <div class="scene garden"></div>
+        <div class="scene the-way"></div>
+        <div class="scene beach"></div>
+    </div>
+
+    <div class="travel-container">
+        <div class="couple-walking">🚶‍♂️❤️🚶‍♀️</div>
+    </div>
+
+    <div class="ui-layer">
+        <div class="valentine-card">
+            <h1>🌹 Happy Valentine's Day 🌹</h1>
+            <p>I built this world for us.<br>Connect to the WiFi to join my heart.</p>
+            
+            <a href="WIFI:S:WiFi_Name;T:WPA;P:Velentine;;" class="btn wifi-btn">Connect to WiFi</a>
+            
+            <button class="btn love-btn" onclick="celebrate()">Be My Valentine?</button>
+
+            <div id="love-message">💖 FOREVER & ALWAYS 💖</div>
+        </div>
+    </div>
+
+    <script>
+        function celebrate() {
+            const msg = document.getElementById('love-message');
+            msg.style.display = 'block';
+            
+            // Create Floating Petals
+            for(let i=0; i<30; i++) {
+                setTimeout(spawnPetal, i * 100);
+            }
+        }
+
+        function spawnPetal() {
+            const petal = document.createElement('div');
+            const items = ['🌹', '❤️', '🌸', '✨'];
+            petal.className = 'petal';
+            petal.innerHTML = items[Math.floor(Math.random() * items.length)];
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.top = '-5vh';
+            petal.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            
+            const duration = Math.random() * 3 + 2;
+            petal.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), duration * 1000);
+        }
+    </script>
+</body>
+</html>
         }
 
         .garden { background: linear-gradient(to bottom, #ff4d6d, #800e13); }
