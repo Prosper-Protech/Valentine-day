@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Love Quest | Will You Be My Valentine? ❤️</title>
+    <!-- Fonts & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Dancing+Script:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js & MediaPipe -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
+    <style>
+        :root {
+            --primary-pink: #ff4d6d;
+            --dark-pink: #c9184a;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1a0a1a 0%, #000 100%);
+            font-family: 'Inter', sans-serif;
+            color: white;
+        }
+
+        #three-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #video-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 120px;
+            height: 90px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--primary-pink);
+            z-index: 1000;
+            background: #000;
+            transform: scaleX(-1);
+            /* Mirror */
+        }
+
+        #input-video {
+            display: none;
+        }
+
+        #output-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .header {
+            position: absolute;
+            top: 40px;
+            text-align: center;
+            pointer-events: auto;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            margin: 0;
+            text-shadow: 0 0 20px var(--primary-pink);
+        }
+
+        .instruction {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Sections */
+        .section {
+            position: absolute;
+            width: 80%;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .section.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .btn-yes {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--primary-pink);
+            margin: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-no {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            opacity: 0.6;
+            margin: 10px;
+        }
+
+        /* Pinned Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 30px;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
+        }
+
+        .nav-dot.active {
+            background: var(--primary-pink);
+            box-shadow: 0 0 10px var(--primary-pink);
+            transform: scale(1.3);
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: 0.8s;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--primary-pink);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Gesture Indicator */
+        #gesture-hint {
+            position: absolute;
+            bottom: 120px;
+            background: rgba(255, 77, 109, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        .btn-back {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <p style="margin-top: 20px;">Waking up Cupid...</p>
+    </div>
+
+    <button class="btn-back" onclick="location.href='index.html'">
+        <i class="fas fa-home"></i> Back
+    </button>
+
+    <div id="video-container">
+        <video id="input-video"></video>
+        <canvas id="output-canvas"></canvas>
+    </div>
+
+    <div id="three-container"></div>
+
+    <div class="ui-overlay">
+        <div class="header">
+            <h1>Special Love Quest</h1>
+            <div class="instruction">
+                <i class="fas fa-hand-paper"></i>
+                Wave or point to interact!
+            </div>
+        </div>
+
+        <!-- Section 1: Question -->
+        <div id="section-home" class="section active">
+            <h2 style="font-family: 'Dancing Script'; font-size: 2.5rem; margin-bottom: 20px;">Will You Be My Valentine?
+            </h2>
+            <p style="margin-bottom: 30px;">Your answer will unlock a 3D surprise...</p>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <button class="btn-yes" onclick="answer('yes')">YES! ✨</button>
+                <button class="btn-no" onmouseover="moveNo(this)">No</button>
+            </div>
+        </div>
+
+        <!-- Section 2: Love Lab -->
+        <div id="section-extra" class="section">
+            <h2 style="font-family: 'Dancing Script'; font-size: 2.5rem; margin-bottom: 15px;">The Love Lab</h2>
+            <p>Pinch your fingers to scale the 3D heart!</p>
+            <div
+                style="margin: 20px 0; font-size: 0.9rem; border: 1px dashed white; padding: 10px; border-radius: 10px;">
+                <i class="fas fa-magic"></i> Move your hand to position the love.
+            </div>
+            <p style="opacity: 0.7;">Swipe left/right to navigate.</p>
+        </div>
+
+        <!-- Section 3: Final Surprise -->
+        <div id="section-final" class="section">
+            <h2 style="font-family: 'Dancing Script'; font-size: 2.5rem; margin-bottom: 15px;">A Final Gift</h2>
+            <p>You've mastered the 3D Love Quest!</p>
+            <div
+                style="background: white; color: var(--primary-pink); padding: 15px; border-radius: 15px; font-weight: 700; margin: 15px 0;">
+                PROMO CODE: LOVE3D
+            </div>
+            <button class="btn-yes" style="font-size: 0.9rem;" onclick="location.href='index.html'">Complete
+                Quest</button>
+        </div>
+
+        <!-- Section 4: Yes Celebration (Popup style) -->
+        <div id="section-yes" class="section">
+            <h2 style="color: gold;">YAY! ❤️</h2>
+            <p>I knew you would say yes! Enjoy the 3D love show.</p>
+            <div style="margin-top: 20px; font-size: 3rem;">🎆</div>
+            <button class="btn-yes" style="font-size: 0.9rem;" onclick="navigateSections('next')">See More
+                Surprise</button>
+        </div>
+
+        <div id="gesture-hint">Waiting for hand...</div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-dot active" data-section="home"></div>
+        <div class="nav-dot" data-section="extra"></div>
+        <div class="nav-dot" data-section="final"></div>
+    </div>
+
+    <script>
+        // --- THREE.JS SETUP ---
+        const container = document.getElementById('three-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xff4d6d, 2);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        // Heart Geometry
+        const x = 0, y = 0;
+        const heartShape = new THREE.Shape();
+        heartShape.moveTo(x + 5, y + 5);
+        heartShape.bezierCurveTo(x + 5, y + 5, x + 4, y, x, y);
+        heartShape.bezierCurveTo(x - 6, y, x - 6, y + 7, x - 6, y + 7);
+        heartShape.bezierCurveTo(x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19);
+        heartShape.bezierCurveTo(x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7);
+        heartShape.bezierCurveTo(x + 16, y + 7, x + 16, y, x + 10, y);
+        heartShape.bezierCurveTo(x + 7, y, x + 5, y + 5, x + 5, y + 5);
+
+        const extrudeSettings = { depth: 2, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
+        const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff4d6d, shininess: 100 });
+        const heartMesh = new THREE.Mesh(geometry, material);
+        heartMesh.scale.set(0.1, 0.1, 0.1);
+        heartMesh.rotation.z = Math.PI;
+        heartMesh.position.y = 2;
+        scene.add(heartMesh);
+
+        // Background Particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 500;
+        const posArray = new Float32Array(particlesCount * 3);
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 50;
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 15;
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            heartMesh.rotation.y += 0.01;
+            particlesMesh.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // --- MEDIAPIPE GESTURE LOGIC ---
+        const videoElement = document.getElementById('input-video');
+        const canvasElement = document.getElementById('output-canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const hint = document.getElementById('gesture-hint');
+
+        const hands = new Hands({
+            locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }
+        });
+
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        hands.onResults(onResults);
+
+        let lastX = 0;
+        let isPinching = false;
+        let lastSectionSwitch = 0;
+
+        function onResults(results) {
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const head = landmarks[8]; // Index finger tip
+                const thumb = landmarks[4]; // Thumb tip
+
+                hint.innerText = "Active Control 👋";
+
+                // 1. Move Heart
+                heartMesh.position.x = (head.x - 0.5) * -24;
+                heartMesh.position.y = (head.y - 0.5) * -18 + 2;
+
+                // 2. Pinch to Scale
+                const distance = Math.sqrt(
+                    Math.pow(head.x - thumb.x, 2) +
+                    Math.pow(head.y - thumb.y, 2)
+                );
+
+                if (distance < 0.05) {
+                    isPinching = true;
+                    heartMesh.scale.set(0.18, 0.18, 0.18);
+                    heartMesh.rotation.x += 0.1;
+                    heartMesh.material.emissive.setHex(0xff0000);
+                } else {
+                    isPinching = false;
+                    heartMesh.scale.set(0.1, 0.1, 0.1);
+                    heartMesh.material.emissive.setHex(0x000000);
+                }
+
+                // 3. Swipe Detection (Waving)
+                const now = Date.now();
+                if (now - lastSectionSwitch > 1000) { // Throttling
+                    if (head.x < 0.2) {
+                        navigateSections('prev');
+                        lastSectionSwitch = now;
+                    } else if (head.x > 0.8) {
+                        navigateSections('next');
+                        lastSectionSwitch = now;
+                    }
+                }
+
+                // Visual Feedback
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#ff4d6d', lineWidth: 4 });
+                drawLandmarks(canvasCtx, landmarks, { color: '#ffffff', lineWidth: 2, radius: 3 });
+
+            } else {
+                hint.innerText = "Show your hand to the camera...";
+            }
+            canvasCtx.restore();
+        }
+
+        const camera_mp = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({ image: videoElement });
+            },
+            width: 640,
+            height: 480
+        });
+        camera_mp.start();
+
+        // Hide loader after camera starts
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 800);
+            }, 2000);
+        });
+
+        // --- PAGE LOGIC ---
+        const sections_list = ['home', 'extra', 'final'];
+        let currentIdx = 0;
+
+        function answer(res) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + res).classList.add('active');
+
+            if (res === 'yes') {
+                heartMesh.material.color.set(0xffd700); // Turn Gold
+                createConfetti();
+            }
+        }
+
+        function moveNo(btn) {
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            btn.style.position = 'absolute';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+
+        function navigateSections(dir) {
+            if (dir === 'next' && currentIdx < sections_list.length - 1) currentIdx++;
+            if (dir === 'prev' && currentIdx > 0) currentIdx--;
+
+            const targetId = sections_list[currentIdx];
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const targetSection = document.getElementById('section-' + targetId);
+            if (targetSection) targetSection.classList.add('active');
+
+            // Update dots
+            document.querySelectorAll('.nav-dot').forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentIdx);
+            });
+        }
+
+        function createConfetti() {
+            // Gold pulse for success
+            const pulse = setInterval(() => {
+                heartMesh.material.emissive.setHex(heartMesh.material.emissive.getHex() === 0xaa8800 ? 0x000000 : 0xaa8800);
+            }, 500);
+            setTimeout(() => clearInterval(pulse), 5000);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
